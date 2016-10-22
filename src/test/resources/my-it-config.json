@@ -1,5 +1,7 @@
 {
   "http.port": ${http.port},
-  "url": "jdbc:hsqldb:mem:it-test?shutdown=true",
-  "driver_class": "org.hsqldb.jdbcDriver"
+  "url": "jdbc:h2:~/tmp/vertxdb",
+  "driver_class": "org.h2.Driver",
+  "user": "sa"
+
 }

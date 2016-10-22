@@ -2,7 +2,6 @@ package org.workspace7.vertx;
 
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
-import io.vertx.core.VertxOptions;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.unit.Async;
@@ -38,7 +37,6 @@ public class MainVerticleTest {
                 .put("http.port", port)
                 .put("url", "jdbc:h2:mem:vdb")
                 .put("user", "sa")
-                .put("password", "")
                 .put("driver_class", "org.h2.Driver"));
         vertx.deployVerticle(MainVerticle.class.getName(), options, context.asyncAssertSuccess());
     }

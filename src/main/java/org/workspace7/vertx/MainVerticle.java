@@ -146,6 +146,7 @@ public class MainVerticle extends AbstractVerticle {
                 (ar) -> {
                     if (ar.failed()) {
                         next.handle(Future.failedFuture(ar.cause()));
+                        sqlConnection.close();
                         return;
                     }
 
@@ -206,7 +207,7 @@ public class MainVerticle extends AbstractVerticle {
                     if (mantra != null) {
                         routingContext.response()
                                 .putHeader("content-type", "application/json;charset=utf-8")
-                                .end(Json.encodePrettily(mantra));
+                                .end(Json.encodePrettily(mantra.result()));
                     } else {
                         routingContext.response().setStatusCode(404).end();
                     }
@@ -246,7 +247,7 @@ public class MainVerticle extends AbstractVerticle {
         final Mantra mantra = Json.decodeValue(routingContext.getBodyAsString(), Mantra.class);
         jdbcClient.getConnection(ar -> {
             SQLConnection sqlConnection = ar.result();
-            insert(mantra, sqlConnection, inserted -> {
+            insert(mantra, sqlConnection, (inserted) -> {
                 if (inserted.failed()) {
                     routingContext.response()
                             .setStatusCode(404)
@@ -255,7 +256,7 @@ public class MainVerticle extends AbstractVerticle {
                 routingContext.response()
                         .setStatusCode(201)
                         .putHeader("content-type", "application/json;charset=utf-8")
-                        .end(Json.encodePrettily(inserted));
+                        .end(Json.encodePrettily(inserted.result()));
                 sqlConnection.close();
             });
         });
@@ -267,7 +268,7 @@ public class MainVerticle extends AbstractVerticle {
         jdbcClient.getConnection(ar -> {
             SQLConnection sqlConnection = ar.result();
             update(updatedMantra, sqlConnection,
-                    u -> {
+                    (u) -> {
                         if (u.failed()) {
                             routingContext.response()
                                     .setStatusCode(404)
@@ -275,7 +276,7 @@ public class MainVerticle extends AbstractVerticle {
                         } else {
                             routingContext.response()
                                     .putHeader("content-type", "application/json;charset=utf-8")
-                                    .end(Json.encodePrettily(u));
+                                    .end(Json.encodePrettily(u.result()));
                         }
 
                     });
