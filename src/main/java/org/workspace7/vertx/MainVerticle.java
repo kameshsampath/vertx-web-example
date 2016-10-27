@@ -384,6 +384,7 @@ public class MainVerticle extends AbstractVerticle {
                             routingContext.response()
                                     .putHeader("content-type", "application/json;charset=utf-8")
                                     .end(Json.encodePrettily(u.result()));
+                            updateSpan.finish();
                         }
 
                     });

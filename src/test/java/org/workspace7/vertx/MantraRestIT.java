@@ -5,6 +5,8 @@ import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -59,4 +61,27 @@ public class MantraRestIT {
 		get("/api/mantras/" + id).then().assertThat().statusCode(404);
 
 	}
+
+    @Test
+    public void testUpdateMantra() throws Exception {
+
+        // get all request and find one mantra
+        final int id = get("/api/mantras").then().assertThat().statusCode(200).extract().jsonPath()
+                .getInt("find { it.mantra = 'Srimathe Ramanujaya Namaha!'}.id");
+
+        given().body("{\"id\":" + id + ",\"mantra\":\"Srimathe Ramanujaya Namaha!!!\"}")
+                .request().put("/api/mantras/" + id).then().assertThat().statusCode(200);
+
+        //get and check if its updted
+
+        get("/api/mantras/" + id).then().assertThat().statusCode(200).body("mantra",
+                equalTo("Srimathe Ramanujaya Namaha!!!"))
+                .body("id", equalTo(id));
+
+        //reset value back
+        given().body("{\"id\":" + id + ",\"mantra\":\"Srimathe Ramanujaya Namaha!\"}")
+                .request().put("/api/mantras/" + id).then().assertThat().statusCode(200);
+
+    }
+
 }

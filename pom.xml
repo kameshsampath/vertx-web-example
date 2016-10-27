@@ -13,6 +13,9 @@
     <packaging>jar</packaging>
     <properties>
         <verticle.main>org.workspace7.vertx.MainVerticle</verticle.main>
+        <hawkular.uri>http://localhost:8080</hawkular.uri>
+        <hawkular.username>jdoe</hawkular.username>
+        <hawkular.password>password</hawkular.password>
     </properties>
     <build>
         <finalName>web-example</finalName>
@@ -68,6 +71,9 @@
                             <target>
                                 <exec executable="${java.home}/bin/java" dir="${project.build.directory}"
                                       spawn="true">
+                                    <env key="HAWKULAR_APM_URI" value="${hawkular.uri}"/>
+                                    <env key="HAWKULAR_APM_USERNAME" value="${hawkular.username}"/>
+                                    <env key="HAWKULAR_APM_PASSWORD" value="${hawkular.password}"/>
                                     <arg value="-jar"/>
                                     <arg value="${project.artifactId}-${project.version}-fat.jar"/>
                                     <arg
