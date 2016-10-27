@@ -30,8 +30,8 @@ public class Mantra {
     }
 
     public Mantra(JsonObject json) {
-        this.id = json.getInteger("id");
-        this.mantra = json.getString("mantra");
+        this.id = json.getInteger("ID");
+        this.mantra = json.getString("MANTRA");
     }
 
     public int getId() {

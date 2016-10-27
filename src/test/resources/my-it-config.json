@@ -1,6 +1,6 @@
 {
   "http.port": ${http.port},
-  "url": "jdbc:h2:~/tmp/vertxdb",
+"url": "jdbc:h2:mem:vertxdb",
   "driver_class": "org.h2.Driver",
   "user": "sa"
 

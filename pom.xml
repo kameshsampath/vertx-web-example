@@ -2,10 +2,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.web.example</groupId>
+    <parent>
+        <groupId>org.workspace7.vertx</groupId>
+        <artifactId>vertx-demos</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../</relativePath>
+    </parent>
     <artifactId>web-example</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
+    <properties>
+        <verticle.main>org.workspace7.vertx.MainVerticle</verticle.main>
+    </properties>
     <build>
         <finalName>web-example</finalName>
         <testResources>
@@ -15,13 +23,6 @@
             </testResource>
         </testResources>
         <plugins>
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
-            </plugin>
             <plugin>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>2.4.3</version>
@@ -53,6 +54,7 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <version>1.8</version>
                 <executions>
@@ -64,11 +66,12 @@
                         </goals>
                         <configuration>
                             <target>
-                                <exec executable="${java.home}/bin/java"
-                                      dir="${project.build.directory}" spawn="true">
+                                <exec executable="${java.home}/bin/java" dir="${project.build.directory}"
+                                      spawn="true">
                                     <arg value="-jar"/>
                                     <arg value="${project.artifactId}-${project.version}-fat.jar"/>
-                                    <arg value="-conf ${project.build.directory}/test-classes/my-it-config.json"/>
+                                    <arg
+                                            value="-conf ${project.build.directory}/test-classes/my-it-config.json"/>
                                 </exec>
                             </target>
                         </configuration>
@@ -81,37 +84,13 @@
                         </goals>
                         <configuration>
                             <target>
-                                <exec executable="bash"
-                                      dir="${project.build.directory}" spawn="false">
+                                <exec executable="bash" dir="${project.build.directory}"
+                                      spawn="false">
                                     <arg value="-c"/>
-                                    <arg value="ps ax | grep -Ei '[\-]DtestPort=${http.port}\s+\-jar\s+${project.artifactId}' | awk 'NR==1{print $1}' | xargs kill -SIGTERM"/>
+                                    <arg
+                                            value="ps ax | grep -Ei '^(.*)\-jar\s+${project.artifactId}' | awk 'NR==1{print $1}' | xargs kill -SIGTERM"/>
                                 </exec>
                             </target>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.4.0</version>
-                <executions>
-                    <execution>
-                        <id>run</id>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>java</executable>
-                            <arguments>
-                                <argument>-classpath</argument>
-                                <classpath></classpath>
-                                <argument>io.vertx.core.Launcher</argument>
-                                <argument>run</argument>
-                                <argument>${verticle.main}</argument>
-                                <argument>-cp</argument>
-                                <argument>${project.basedir}/target/classes</argument>
-                            </arguments>
                         </configuration>
                     </execution>
                 </executions>
@@ -155,11 +134,6 @@
             </plugin>
         </plugins>
     </build>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <vertx.version>3.3.2</vertx.version>
-        <verticle.main>org.workspace7.vertx.MainVerticle</verticle.main>
-    </properties>
     <dependencies>
         <dependency>
             <groupId>io.vertx</groupId>
@@ -177,12 +151,48 @@
             <groupId>io.vertx</groupId>
             <artifactId>vertx-jdbc-client</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${version.com.fasterxml.jackson.core}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${version.com.fasterxml.jackson.core}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>${version.com.fasterxml.jackson.core}</version>
+        </dependency>
+
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>1.4.192</version>
         </dependency>
-        <!-- Unit test-->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+        </dependency>
+
+        <!-- OpenTracing -->
+        <dependency>
+            <groupId>org.hawkular.apm</groupId>
+            <artifactId>hawkular-apm-client-opentracing</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hawkular.apm</groupId>
+            <artifactId>hawkular-apm-trace-publisher-rest-client</artifactId>
+        </dependency>
+
+
+        <!-- Unit test -->
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-unit</artifactId>
@@ -191,32 +201,15 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
         </dependency>
         <!-- REST integration tests -->
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
-            <version>3.0.1</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>3.4.1</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>io.vertx</groupId>
-                <artifactId>vertx-dependencies</artifactId>
-                <version>${vertx.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 </project>
