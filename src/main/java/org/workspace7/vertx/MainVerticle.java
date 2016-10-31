@@ -141,6 +141,12 @@ public class MainVerticle extends AbstractVerticle {
         //static routes
         router.route("/assets/*").handler(StaticHandler.create("assets"));
 
+
+//        //Authentication and Authorization
+//        BasicAuthHandler basicAuthHandler = BasicAuthHandler.create(authProvider);
+//
+//        router.route("/admin/*").handler(basicAuthHandler);
+
         //REST API
 
 

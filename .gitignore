@@ -1,1 +1,5 @@
 .vertx
+/src/test/java/org/workspace7/vertx/ShiroIniTest.java
+/src/test/java/org/workspace7/vertx/ShiroLDAPTest.java
+/src/test/resources/test-shiro.ini
+/src/test/resources/test-shiro-ldap.ini
